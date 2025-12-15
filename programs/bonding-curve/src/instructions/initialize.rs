@@ -1,27 +1,56 @@
 use anchor_lang::prelude::*;
-use crate::state::{CurveConfiguration};
-use crate::constants::CONFIG_SEED;
+
+use crate::{
+    constants::{BONDING_CURVE_SUPPLY, GLOBAL_SEED, LAMPORTS_PER_SOL, P, R, SCALE, TOTAL_SUPPLY},
+    error::ErrorCode,
+    program::BondingCurve,
+    {Global, OperatingState},
+};
 
 #[derive(Accounts)]
-pub struct InitializeCurveConfiguration<'info> {
+pub struct Initialize<'info> {
+    #[account(mut)]
+    pub user: Signer<'info>,
+
     #[account(
         init,
-        payer = admin,
-        space = CurveConfiguration::LEN,
-        seeds = [CONFIG_SEED.as_bytes()],
-        bump
+        payer = user,
+        space = 8 + Global::INIT_SPACE,
+        seeds = [GLOBAL_SEED],
+        bump,
     )]
-    pub dex_config_acc: Box<Account<'info, CurveConfiguration>>,
-    #[account(mut)]
-    pub admin: Signer<'info>,
-    pub rent: Sysvar<'info, Rent>,
-    pub system_program: Program<'info,System>
+    pub global_state: Account<'info, Global>,
+
+    pub system_program: Program<'info, System>,
+
+    #[account(
+        constraint = this_program.programdata_address()? == Some(program_data.key())
+    )]
+    pub this_program: Program<'info, BondingCurve>,
+
+    #[account(
+        constraint = program_data.upgrade_authority_address == Some(user.key())
+            @ ErrorCode::NotAuthorized
+    )]
+    pub program_data: Account<'info, ProgramData>,
 }
 
-pub fn handler(ctx: Context<InitializeCurveConfiguration>, fee: u64) -> Result<()> {
-    let config_account = &mut ctx.accounts.dex_config_acc;
-    config_account.set_inner(CurveConfiguration {
-        fees: fee,
-    });
-    Ok(())
+impl<'info> Initialize<'info> {
+    pub fn handler(&mut self, bump: &InitializeBumps) -> Result<()> {
+        let global = &mut self.global_state;
+
+        global.set_inner(Global {
+            authority: self.user.key(),
+            operating_state: OperatingState::Normal,
+            fee_recipient: self.user.key(),
+            initial_virtual_token_reserves: P * SCALE,
+            initial_virtual_sol_reserves: R * LAMPORTS_PER_SOL,
+            initial_real_token_reserves: BONDING_CURVE_SUPPLY,
+            token_total_supply: TOTAL_SUPPLY,
+            fee_basis_points: 100, // 1%
+            bump: bump.global_state,
+        });
+
+        Ok(())
+    }
 }

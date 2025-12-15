@@ -15,7 +15,7 @@ declare_id!("EHsYksFv4a86eptVJoV56SPXdP7WNhnMYqoAbpzMXt26");
 pub mod bonding_curve {
     use super::*;
 
-    pub fn initialize(ctx: Context<InitializeCurveConfiguration>, fee: u64) -> Result<()> {
-        initialize::handler(ctx, fee)
+    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+        ctx.accounts.handler(&ctx.bumps)
     }
 }

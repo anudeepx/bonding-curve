@@ -1,10 +1,5 @@
-use anchor_lang::prelude::*;
+pub mod bonding_curve;
+pub mod global;
 
-#[account()]
-pub struct CurveConfiguration {
-    pub fees: u64
-}
-
-impl CurveConfiguration {
-    pub const LEN: usize = 8 + 8; // discriminator + fees
-}
+pub use bonding_curve::*;
+pub use global::*;
