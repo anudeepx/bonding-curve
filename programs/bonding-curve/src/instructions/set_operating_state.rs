@@ -1,5 +1,8 @@
+use crate::{
+    error::ErrorCode,
+    {constants::GLOBAL_SEED, Global, OperatingState},
+};
 use anchor_lang::prelude::*;
-use crate::{{Global, OperatingState, constants::GLOBAL_SEED}, error::ErrorCode};
 
 #[derive(Accounts)]
 pub struct SetOperatingState<'info> {
@@ -10,14 +13,14 @@ pub struct SetOperatingState<'info> {
     )]
     pub global_state: Account<'info, Global>,
     #[account(mut)]
-    pub authority: Signer<'info>,
+    pub admin: Signer<'info>,
 }
 impl<'info> SetOperatingState<'info> {
     pub fn handler(&mut self, new_state: OperatingState) -> Result<()> {
         let global = &mut self.global_state;
 
         require!(
-            self.authority.key() == global.authority,
+            self.admin.key() == global.authority,
             ErrorCode::NotAuthorized
         );
 

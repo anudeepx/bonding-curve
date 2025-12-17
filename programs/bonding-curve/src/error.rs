@@ -10,4 +10,8 @@ pub enum ErrorCode {
     Underflow,
     #[msg("Not authorized to perform this action")]
     NotAuthorized,
+    #[msg("Invalid program data address")]
+    InvalidProgramDataAddress,
+    #[msg("Invalid fee basis points")]
+    InvalidFeeBasisPoints,
 }
