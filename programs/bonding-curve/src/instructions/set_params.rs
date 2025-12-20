@@ -11,7 +11,7 @@ pub struct SetParams<'info> {
         bump = global_state.bump,
         constraint = global_state.authority == admin.key() @ ErrorCode::NotAuthorized
     )]
-    pub global_state: Account<'info, Global>,
+    pub global_state: Box<Account<'info, Global>>,
     pub system_program: Program<'info, System>,
 }
 

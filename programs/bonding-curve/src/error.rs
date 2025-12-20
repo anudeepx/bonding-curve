@@ -14,4 +14,6 @@ pub enum ErrorCode {
     InvalidProgramDataAddress,
     #[msg("Invalid fee basis points")]
     InvalidFeeBasisPoints,
+    #[msg("Operating state does not allow this action")]
+    InvalidOperatingState,
 }

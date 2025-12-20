@@ -11,7 +11,7 @@ pub struct SetOperatingState<'info> {
         seeds = [GLOBAL_SEED],
         bump = global_state.bump,
     )]
-    pub global_state: Account<'info, Global>,
+    pub global_state: Box<Account<'info, Global>>,
     #[account(mut)]
     pub admin: Signer<'info>,
 }

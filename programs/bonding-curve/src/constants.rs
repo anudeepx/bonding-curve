@@ -1,5 +1,8 @@
 // seeds
 pub const GLOBAL_SEED: &[u8] = b"global";
+pub const BONDING_CURVE_SEED: &[u8] = b"bonding_curve";
+pub const BONDING_CURVE_VAULT_SEED: &[u8] = b"vault";
+pub const METADATA_SEED: &[u8] = b"metadata";
 
 // constants
 pub const P: u64 = 1_073_000_191; // inital_virtual_token

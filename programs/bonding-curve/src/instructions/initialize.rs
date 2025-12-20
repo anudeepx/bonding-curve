@@ -1,7 +1,9 @@
 use anchor_lang::prelude::*;
 
 use crate::{
-    constants::{BONDING_CURVE_SUPPLY, GLOBAL_SEED, LAMPORTS_PER_SOL, P, R, DECIMALS, TOTAL_SUPPLY},
+    constants::{
+        BONDING_CURVE_SUPPLY, DECIMALS, GLOBAL_SEED, LAMPORTS_PER_SOL, P, R, TOTAL_SUPPLY,
+    },
     error::ErrorCode,
     program::BondingCurve,
     {Global, OperatingState},
@@ -19,7 +21,7 @@ pub struct Initialize<'info> {
         seeds = [GLOBAL_SEED],
         bump,
     )]
-    pub global_state: Account<'info, Global>,
+    pub global_state: Box<Account<'info, Global>>,
 
     pub system_program: Program<'info, System>,
 
@@ -32,7 +34,7 @@ pub struct Initialize<'info> {
         constraint = program_data.upgrade_authority_address == Some(admin.key())
             @ ErrorCode::NotAuthorized
     )]
-    pub program_data: Account<'info, ProgramData>,
+    pub program_data: Box<Account<'info, ProgramData>>,
 }
 
 impl<'info> Initialize<'info> {
